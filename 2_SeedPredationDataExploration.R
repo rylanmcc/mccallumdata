@@ -36,8 +36,6 @@ mean(sun$Prop_rmv)
 oats <- Dat[which(Dat$Species == "oats"),]
 mean(oats$Prop_rmv)
 
-# working along, making more changes
-new graph
 
 
 
