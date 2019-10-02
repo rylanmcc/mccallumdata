@@ -48,3 +48,6 @@ locs <- read_csv("SeedAdditionTransectGPSPoints2017.csv")
 ### merge data with locations
 dat <- left_join(Dat, locs, by=c("Site2"="SiteName"))
 
+### write new csv for next script
+write_csv(dat, "SeedPredationDataForAnalysis.csv")
+

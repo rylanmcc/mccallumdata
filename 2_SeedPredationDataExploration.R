@@ -2,6 +2,9 @@
 #install.packages("tidyverse")
 library("tidyverse")
 
+### read in data file made from script 1
+Dat <- read_csv("SeedPredationDataForAnalysis.csv")
+  
 #test for normality of data
 #run linear models
 #interactions?
