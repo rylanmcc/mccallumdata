@@ -45,3 +45,6 @@ Dat <- Dat %>%
 ### read in GPS waypoints with lat, long, and elevation of each plot
 locs <- read_csv("SeedAdditionTransectGPSPoints2017.csv")
 
+### merge data with locations
+dat <- left_join(Dat, locs, by=c("Site2"="SiteName"))
+
