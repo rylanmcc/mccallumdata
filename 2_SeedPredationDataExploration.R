@@ -2,6 +2,18 @@
 #install.packages("tidyverse")
 library("tidyverse")
 
+
+### read in data file made from script 1
+Dat <- read_csv("SeedPredationDataForAnalysis.csv")
+  
+#test for normality of data
+#run linear models
+#interactions?
+#want temp and elevation as well
+lm.1<-lm(Prop_rmv~Species+Canopy,data=Dat)
+summary(lm.1)
+anova(lm.1)
+
 ### read in raw data file and make new columns for proportion removed
 Dat <- read_csv("SeedPredationDataForR2019.csv") %>% 
   mutate(N_start = if_else(Species=="sun", 5, ifelse(Species=="oats", 8, NA)),
@@ -50,15 +62,48 @@ summary(canopy)
 
 LatLongElv_2017 <- SeedAdditionTransectGPSPoints2017
 
-### Making a new data frame to test if i can merge my two existing data frames together 
+### attempt to try and and create predation x elevation graphs 
 
-TestMergeData <- Dat
+Elevation <- SeedPredationDataForAnalysis$SiteElevation
 
-MergedDataFrame <- merge(TestMergeData, LatLongElv_2017)
+ggplot(SeedPredationDataForAnalysis, aes(x=Elevation, y=Prop_rmv)) + geom_point()
 
-cbind(LatLongElv_2017$`Site Name`, TestMergeData)
+ggplot(SeedPredationDataForAnalysis, aes(x=Elevation, y=Prop_rmv, fill = canopy)) + geom_point()
 
-TestMergeData$GivenSiteName <- ifelse((TestMergeData$Site = RP-1B) & (TestMergeData$Canopy = open), LatLongElv_2017$`Site Name`
+ggplot(SeedPredationDataForAnalysis, aes(x=Elevation, y=Prop_rmv, col=c("red", "blue")[canopy])) + geom_point()
+
+ggplot(SeedPredationDataForAnalysis, aes(x=Elevation, y=Prop_rmv, by=canopy)) + geom_line()
+
+
+### this ^^^ previous graph is messed up ... possibly due to the y axis being non - continuos but i am treating it as such  
+
+
+
+####### graph predation x elevation but with the prop remov. as an average per site... tried to mutate data
+
+
+Site2 <- SeedPredationDataForAnalysis$Site2
+SeedPredationDataForAnalysis$Site3 <- as.factor(SeedPredationDataForAnalysis$Site2)
+
+Site3 <- SeedPredationDataForAnalysis$Site3
+
+prop_X_elev <- SeedPredationDataForAnalysis %>% 
+  select(Site3,Prop_rmv,SiteElevation)
+  group_by(Site3) %>% 
+  mutate(Prop_rmv=mean(Prop_rmv)) %>% 
+  select(-Prop_rmv) %>% 
+  unique()
+  
+
+
+### bar graph does not work either..... 
+
+ggplot(SeedPredationDataForAnalysis, aes(x=Elevation)) +
+  geom_bar(fill = "forestgreen")
+
+
+
+
 
 
 
