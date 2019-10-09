@@ -14,10 +14,6 @@ lm.1<-lm(Prop_rmv~Species+Canopy,data=Dat)
 summary(lm.1)
 anova(lm.1)
 
-### read in raw data file and make new columns for proportion removed
-Dat <- read_csv("SeedPredationDataForR2019.csv") %>% 
-  mutate(N_start = if_else(Species=="sun", 5, ifelse(Species=="oats", 8, NA)),
-         Prop_rmv = 1-N_end/N_start)
 
 
 ### take a look at distributions of removal rates
@@ -70,9 +66,9 @@ Elevation <- Dat$SiteElevation
 
 ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv)) + geom_point()
 
-ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv, fill = canopy)) + geom_point()
+ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv, fill = Canopy)) + geom_point()
 
-ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv, col=c("red", "blue")[canopy])) + geom_point()
+ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv, col=c("red", "blue")[Canopy])) + geom_point()
 
 ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv, by=canopy)) + geom_line()
 
