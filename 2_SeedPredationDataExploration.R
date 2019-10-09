@@ -64,15 +64,17 @@ LatLongElv_2017 <- SeedAdditionTransectGPSPoints2017
 
 ### attempt to try and and create predation x elevation graphs 
 
-Elevation <- SeedPredationDataForAnalysis$SiteElevation
+summary(dat)
 
-ggplot(SeedPredationDataForAnalysis, aes(x=Elevation, y=Prop_rmv)) + geom_point()
+Elevation <- Dat$SiteElevation
 
-ggplot(SeedPredationDataForAnalysis, aes(x=Elevation, y=Prop_rmv, fill = canopy)) + geom_point()
+ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv)) + geom_point()
 
-ggplot(SeedPredationDataForAnalysis, aes(x=Elevation, y=Prop_rmv, col=c("red", "blue")[canopy])) + geom_point()
+ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv, fill = canopy)) + geom_point()
 
-ggplot(SeedPredationDataForAnalysis, aes(x=Elevation, y=Prop_rmv, by=canopy)) + geom_line()
+ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv, col=c("red", "blue")[canopy])) + geom_point()
+
+ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv, by=canopy)) + geom_line()
 
 
 ### this ^^^ previous graph is messed up ... possibly due to the y axis being non - continuos but i am treating it as such  
@@ -82,12 +84,12 @@ ggplot(SeedPredationDataForAnalysis, aes(x=Elevation, y=Prop_rmv, by=canopy)) + 
 ####### graph predation x elevation but with the prop remov. as an average per site... tried to mutate data
 
 
-Site2 <- SeedPredationDataForAnalysis$Site2
-SeedPredationDataForAnalysis$Site3 <- as.factor(SeedPredationDataForAnalysis$Site2)
+Site2 <- Dat$Site2
+Dat$Site3 <- as.factor(Dat$Site2)
 
-Site3 <- SeedPredationDataForAnalysis$Site3
+Site3 <- Dat$Site3
 
-prop_X_elev <- SeedPredationDataForAnalysis %>% 
+prop_X_elev <- Dat %>% 
   select(Site3,Prop_rmv,SiteElevation)
   group_by(Site3) %>% 
   mutate(Prop_rmv=mean(Prop_rmv)) %>% 
@@ -98,7 +100,7 @@ prop_X_elev <- SeedPredationDataForAnalysis %>%
 
 ### bar graph does not work either..... 
 
-ggplot(SeedPredationDataForAnalysis, aes(x=Elevation)) +
+ggplot(Dat, aes(x=Elevation)) +
   geom_bar(fill = "forestgreen")
 
 
