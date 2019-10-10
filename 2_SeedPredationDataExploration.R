@@ -2,19 +2,9 @@
 #install.packages("tidyverse")
 library("tidyverse")
 
-
 ### read in data file made from script 1
 Dat <- read_csv("SeedPredationDataForAnalysis.csv")
   
-#test for normality of data
-#run linear models
-#interactions?
-#want temp and elevation as well
-lm.1<-lm(Prop_rmv~Species+Canopy,data=Dat)
-summary(lm.1)
-anova(lm.1)
-
-
 
 ### take a look at distributions of removal rates
 library(ggplot2)
@@ -38,67 +28,30 @@ mean(sun$Prop_rmv)
 oats <- Dat[which(Dat$Species == "oats"),]
 mean(oats$Prop_rmv)
 
-#test for normality of data
-#run linear models
-#interactions?
-#want temp and elevation as well
-lm.1<-lm(Prop_rmv~Species+Canopy,data=Dat)
-summary(lm.1)
-anova(lm.1)
 
-### Trying to figure out how to link canopy to site names
-### Link "closed" to **RP-3-1** and "open" to **RP-3-2** 
+###  predation x elevation x canopy graphs 
 
-summary(canopy)
-
-canopy <- Dat$Canopy
-summary(canopy)
-
-### saved the elevation, latitude, and longitude as an easier name to work with 
-
-LatLongElv_2017 <- SeedAdditionTransectGPSPoints2017
-
-### attempt to try and and create predation x elevation graphs 
-
-summary(dat)
-
-Elevation <- Dat$SiteElevation
-
-ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv)) + geom_point()
-
-ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv, fill = Canopy)) + geom_point()
-
-ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv, col=c("red", "blue")[Canopy])) + geom_point()
-
-ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv, by=canopy)) + geom_line()
+ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv, colour = Canopy)) + 
+  geom_point() +
+  geom_smooth(method="glm")
 
 
-### this ^^^ previous graph is messed up ... possibly due to the y axis being non - continuos but i am treating it as such  
+### let's do some stats
+library(lme4)
+library(lmerTest)
 
+# this model runs but we know it's inappropriate because it doesn't deal wtih bounded nature of response variable
+mod1 <- lmer(Prop_rmv ~ SiteElevation*Canopy + (1|Site), data=Dat)
+summary(mod1)
 
+# this is appropritate but won't run
+mod2 <- glmer(Prop_rmv ~ SiteElevation*Canopy + (1|Site), family="binomial", control= glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=100000)), data=Dat)
 
-####### graph predation x elevation but with the prop remov. as an average per site... tried to mutate data
-
-
-Site2 <- Dat$Site2
-Dat$Site3 <- as.factor(Dat$Site2)
-
-Site3 <- Dat$Site3
-
-prop_X_elev <- Dat %>% 
-  select(Site3,Prop_rmv,SiteElevation)
-  group_by(Site3) %>% 
-  mutate(Prop_rmv=mean(Prop_rmv)) %>% 
-  select(-Prop_rmv) %>% 
-  unique()
-  
-
-
-### bar graph does not work either..... 
-
-ggplot(Dat, aes(x=Elevation)) +
-  geom_bar(fill = "forestgreen")
-
+# this has proper handling of bounded response variable but has pseudoreplication by dropping random effect
+mod3 <- glm(Prop_rmv ~ SiteElevation*Canopy, family="binomial", data=Dat)
+summary(mod3)
+library(visreg)
+visreg(mod3, xvar="SiteElevation", by="Canopy", overlay=T)
 
 
 
