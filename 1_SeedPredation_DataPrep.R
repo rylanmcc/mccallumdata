@@ -48,6 +48,15 @@ locs <- read_csv("SeedAdditionTransectGPSPoints2017.csv")
 ### merge data with locations
 dat <- left_join(Dat, locs, by=c("Site2"="SiteName"))
 
+
+
+#### converting Date to julian days 
+dat$Date2 <- format(dat$Date, "%j")
+
+
 ### write new csv for next script
 write_csv(dat, "SeedPredationDataForAnalysis.csv")
+
+
+
 
