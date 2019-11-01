@@ -80,7 +80,7 @@ library(standardize)
 Dat$scaledsitelev <- scale(Dat$SiteElevation.x)
 ###Dat$scaledCanopy <- scale(Dat$CanopyNum)
 
-
+## missing CI's but good model graph 
 mod2 <- glmer(Prop_rmv ~ scaledsitelev*Canopy + (scaledsitelev|Species) + (1|Date2) + (1|Transect/Site), family="binomial", control= glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun=100000)), data=Dat)
 
 visreg(mod2, xvar="scaledsitelev", by="Canopy", overlay=T, scale ="response")
@@ -89,10 +89,12 @@ summary(mod2)
 ### mod 2 through gg instead of visreg 
 
 #install.packages("ggeffects")
+#install.packages("effects")
 library(ggeffects)
 
-ggtest <- ggpredict(mod2,terms=c("scaledsitelev[all]","Canopy")) 
-plot(ggtest, rawdata = FALSE)
+## Scaled elevation x prop rem. x canopy graph 
+ggtest <- ggeffect(mod2,terms=c("scaledsitelev[all]","Canopy")) 
+plot(ggtest, rawdata = FALSE) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),panel.background = element_blank(), axis.line=element_line(colour = "green")) + xlab("Scaled Site Elevation") + ylab("Proportion Removed")
 
 
 ############################
