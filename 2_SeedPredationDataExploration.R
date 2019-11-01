@@ -17,9 +17,6 @@ Prop_rmv <- Dat$Prop_rmv
 mean(Prop_rmv)
 
 ### mean of sunflower seeds removed 
-Species <- Dat$Species
-Dat$Species<- as.factor(Dat$Species)
-
 sun <- Dat[which(Dat$Species == "sun"),]
 mean(sun$Prop_rmv)
 
@@ -31,19 +28,19 @@ mean(oats$Prop_rmv)
 plot(Prop_rmv ~ Date2, data=Dat)
 
 ##### ASK AMY ABOUT SITE ELEVATION ##################
+
 SiteElevation <- dat$SiteElevation.x
 
 ###  predation x elevation x canopy graph
-install.packages("ggpmisc", repos = "https://cran.rstudio.com")
+#install.packages("ggpmisc")
 library(dplyr) 
-
 library(ggplot2)
 library(ggpmisc)
 ggplot(Dat, aes(x=SiteElevation, y=Prop_rmv, colour = Canopy)) + geom_point() + geom_smooth(method="glm") + xlab("Site Elevation") + ylab("Proportion of Seeds Removed") +stat_fit_glance(method = 'lm', method.args = list(formula = formula),geom = 'text',aes(label = paste("P-value = ", signif(..p.value.., digits = 4), sep = "")), label.x.npc = 'right', label.y.npc = 0.35, size = 3)
 
 
 
-ggplot(Dat, aes(x= SiteElevation, y= Prop_rmv, color = Canopy)) + geom_point() + geom_smooth() + geom = 'text' aes((label = paste("P-value = ", signif(..p.value.., digits = 4), sep = "")),  label.x.npc = 'right', label.y.npc = 0.35, size = 3)
+ggplot(Dat, aes(x= SiteElevation, y= Prop_rmv, color = Canopy)) + geom_point() + geom_smooth() + geom = 'text' + aes((label = paste("P-value = ", signif(..p.value.., digits = 4), sep = "")),  label.x.npc = 'right', label.y.npc = 0.35, size = 3)
 
 ##########
 
@@ -80,7 +77,7 @@ library(lme4)
 #Try scaling predictor variables
 ####install.packages("standardize")
 library(standardize)
-Dat$scaledsitelev <- scale(Dat$SiteElevation)
+Dat$scaledsitelev <- scale(Dat$SiteElevation.x)
 ###Dat$scaledCanopy <- scale(Dat$CanopyNum)
 
 
@@ -89,11 +86,13 @@ mod2 <- glmer(Prop_rmv ~ scaledsitelev*Canopy + (scaledsitelev|Species) + (1|Dat
 visreg(mod2, xvar="scaledsitelev", by="Canopy", overlay=T, scale ="response")
 summary(mod2)
 
-install.packages("ggeffects")
+### mod 2 through gg instead of visreg 
+
+#install.packages("ggeffects")
 library(ggeffects)
 
-ggtest <- ggpredict(mod2,terms=c("scaledsitelev","Canopy"))
-plot(ggtest, rawdata = TRUE )
+ggtest <- ggpredict(mod2,terms=c("scaledsitelev[all]","Canopy")) 
+plot(ggtest, rawdata = FALSE)
 
 
 ############################
