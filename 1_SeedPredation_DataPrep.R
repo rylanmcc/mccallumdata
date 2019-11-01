@@ -42,12 +42,12 @@ Dat <- Dat %>%
                                                                                                                                                                                                                                ifelse(Site=="MB-5"&Canopy=="open", "MB-5-2",
                                                                                                                                                                                                                                       ifelse(Site=="MB-5"&Canopy=="closed", "MB-5-1", NA)))))))))))))))))))))))))))))))))
 
+
 ### read in GPS waypoints with lat, long, and elevation of each plot
 locs <- read_csv("SeedAdditionTransectGPSPoints2017.csv")
 
 ### merge data with locations
 dat <- left_join(Dat, locs, by=c("Site2"="SiteName"))
-
 
 
 #### converting Date to julian days 
@@ -56,6 +56,20 @@ dat$Date2 <- format(dat$Date, "%j")
 
 ### write new csv for next script
 write_csv(dat, "SeedPredationDataForAnalysis.csv")
+
+
+### Creating new Transect column 
+dat$Transect <- ifelse(grepl("RP", dat$Site, ignore.case = T), "RP", ifelse(grepl("MB", dat$Site, ignore.case = T), "MB", "Other"))
+
+
+
+
+
+
+
+
+
+
 
 
 
